@@ -39,6 +39,12 @@ public class OrderController {
         return orderService.cancelOrder(id);
     }
 
+    //to check order canceled
+     @PostMapping("/{id}/canceled")
+    public Map<String, Object> cancelOrdered(@PathVariable int id) {
+        return orderService.getOrder(id);
+    }
+
     @GetMapping("/{id}/status")
     public Map<String, Object> getStatus(@PathVariable int id) {
         return orderService.getOrderStatus(id);
