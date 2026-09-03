@@ -29,6 +29,12 @@ public class OrderController {
         return orderService.getOrder(id);
     }
 
+    //new addtion to get order sumary
+    @GetMapping("/{id}/summary")
+    public Map<String, Object> getOrderSummary(@PathVariable int id) {
+        return orderService.getOrder(id);
+    }
+
     @PostMapping("/{id}/pay")
     public Map<String, Object> payOrder(@PathVariable int id) {
         return orderService.processPayment(id);
