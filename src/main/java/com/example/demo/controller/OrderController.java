@@ -20,6 +20,7 @@ public class OrderController {
             @RequestParam String customer,
             @RequestParam String product,
             @RequestParam int quantity) {
+        log.info("this is post mapping in create order");
 
         return orderService.createOrder(customer, product, quantity);
     }
