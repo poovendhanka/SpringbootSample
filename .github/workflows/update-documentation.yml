@@ -11,6 +11,7 @@ on:
 
 permissions:
   contents: write
+  copilot-requests: write
 
 jobs:
   update-docs:
@@ -31,7 +32,7 @@ jobs:
 
       - name: Generate documentation
         env:
-          COPILOT_GITHUB_TOKEN: ${{ secrets.COPILOT_TOKEN }}
+          COPILOT_GITHUB_TOKEN: ${{ github.token }}
         run: >
           copilot -p
           "Use the code-documentation skill.
