@@ -27,6 +27,7 @@ public class OrderController {
 
     @GetMapping("/{id}")
     public Map<String, Object> getOrder(@PathVariable int id) {
+        log.info("this is getOrder");
         return orderService.getOrder(id);
     }
 
