@@ -25,7 +25,8 @@ public class OrderService {
             return response("FAILED", "Product name is required");
         }
 
-        if (quantity <= 0) {
+        //Chnaging value to 1 as per biz logic
+        if (quantity <= 1) {
             return response("FAILED", "Quantity must be greater than zero");
         }
 
