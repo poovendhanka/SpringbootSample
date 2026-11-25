@@ -15,17 +15,20 @@ permissions:
 
 jobs:
   update-docs:
+    if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Stage branch
-        uses: actions/checkout@v6
+      - name: Checkout branch
+        uses: actions/checkout@v4
         with:
-          ref: Stage
+          ref: ${{ github.ref_name }}
           fetch-depth: 0
 
       - name: Set up Node.js
-        uses: actions/setup-node@v7
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
 
       - name: Install GitHub Copilot CLI
         run: npm install -g @github/copilot
@@ -36,7 +39,7 @@ jobs:
         run: >
           copilot -p
           "Use the code-documentation skill.
-          Analyze the latest code in the Stage branch and recent changes.
+          Analyze the latest code in the ${{ github.ref_name }} branch and recent changes.
           Update docs/ARCHITECTURE.md, docs/API.md, and docs/CHANGE_HISTORY.md.
           Do not modify application source code."
           --allow-tool='shell(git:*)'
@@ -54,5 +57,5 @@ jobs:
             echo "No documentation changes."
           else
             git commit -m "docs: update generated documentation"
-            git push origin Stage
+            git push origin HEAD:${{ github.ref_name }}
           fi
