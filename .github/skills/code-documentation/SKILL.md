@@ -1,65 +1,51 @@
-name: Update Code Documentation
+---
+name: code-documentation
+description: Analyze a repository's codebase and recent git history to create or update docs/ARCHITECTURE.md, docs/API.md, and docs/CHANGE_HISTORY.md across any language or framework (Java/Spring Boot, Python, Go, JavaScript/TypeScript, React, etc.) without modifying application source code.
+---
 
-on:
-  workflow_dispatch:
+# Code Documentation Skill
 
-  pull_request:
-    types: [closed]
-    branches:
-      - main
+You are responsible for maintaining accurate, up-to-date technical documentation under `docs/` based strictly on the actual repository contents and git history.
 
-permissions:
-  contents: write
+## Rules
 
-jobs:
-  update-documentation:
-    if: >
-      github.event_name == 'workflow_dispatch' ||
-      github.event.pull_request.merged == true
+1. **Never modify application code, tests, or build/config files.** Only create or update files inside `docs/`:
+   - `docs/ARCHITECTURE.md`
+   - `docs/API.md`
+   - `docs/CHANGE_HISTORY.md`
+2. **Verify before writing.** Only document files, symbols, endpoints, components, dependencies, and behaviors you directly observe in the repository or `git` output. Do not invent or guess undocumented features.
+3. **Preserve existing history.** In `docs/CHANGE_HISTORY.md`, keep previously recorded entries and prepend/append new commits without duplicating already-documented SHAs.
+4. **Be language- and framework-agnostic.** Adapt your analysis to whatever stack the repository uses.
 
-    runs-on: ubuntu-latest
+## Workflow
 
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v6
-        with:
-          ref: main
-          fetch-depth: 0
+### Step 1: Inspect Repository & Recent Changes
+Run git and file inspection commands to understand the project:
+- Check recent commits and changed files:
+  - `git log -n 15 --oneline`
+  - `git show --stat HEAD` (or `git diff HEAD~1..HEAD` when applicable)
+- Identify the project's language(s), framework(s), and build/package manifests (e.g., `pom.xml`/`build.gradle`, `pyproject.toml`/`requirements.txt`, `go.mod`, `package.json`, `Dockerfile`).
+- Read existing `docs/ARCHITECTURE.md`, `docs/API.md`, and `docs/CHANGE_HISTORY.md` if they exist.
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v7
+### Step 2: Update `docs/ARCHITECTURE.md`
+Include:
+- **Overview**: What the application/library does.
+- **Tech Stack**: Languages, frameworks, runtime versions, and key dependencies observed in manifests.
+- **Repository Structure**: High-level directory and module layout.
+- **Architecture & Data Flow**: Key layers/components and how data or requests flow through them (include a concise Mermaid diagram if helpful).
+- **Configuration & Entrypoints**: Main entrypoints, key config files, and environment variables referenced in code/config.
 
-      - name: Install GitHub Copilot CLI
-        run: npm install -g @github/copilot
+### Step 3: Update `docs/API.md`
+Adapt this file to the repository type:
+- **Backend / Web Services** (e.g., Java Spring Boot, Python FastAPI/Flask/Django, Go net/http/Gin, Node Express/NestJS):
+  - List HTTP/REST/GraphQL/gRPC endpoints with method, path, controller/handler location, request params/body, response structure, and auth requirements if any.
+- **Frontend / UI Apps** (e.g., React, Next.js, Vue):
+  - Document routes/pages, key exported components and their props, custom hooks/state stores, and external API calls/integrations.
+- **Libraries / CLI Tools / Workers**:
+  - Document public modules, classes/functions, CLI commands/flags, or scheduled/polling jobs.
+- If the repo combines frontend + backend, include sections for both.
 
-      - name: Generate documentation
-        env:
-          COPILOT_GITHUB_TOKEN: ${{ github.token }}
-          PR_NUMBER: ${{ github.event.pull_request.number }}
-          PR_TITLE: ${{ github.event.pull_request.title }}
-          MERGE_SHA: ${{ github.event.pull_request.merge_commit_sha }}
-        run: |
-          if [ -z "$PR_NUMBER" ]; then
-            PROMPT="Use the /code-documentation skill. Analyze the complete current repository and initialize or refresh the architecture, API and change-history documentation."
-          else
-            PROMPT="Use the /code-documentation skill. Analyze merged PR #$PR_NUMBER titled '$PR_TITLE'. Inspect merge commit $MERGE_SHA and its changed code, understand the surrounding implementation, and update the architecture, API and change-history documentation."
-          fi
-
-          copilot -p "$PROMPT" \
-            --allow-tool='shell(git:*)' \
-            --allow-tool=write \
-            --no-ask-user
-
-      - name: Commit documentation
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-
-          git add docs/
-
-          if git diff --cached --quiet; then
-            echo "No documentation changes."
-          else
-            git commit -m "docs: update generated code documentation"
-            git push
-          fi
+### Step 4: Update `docs/CHANGE_HISTORY.md`
+- Record notable recent commits from `git log` (and PR numbers/titles if present in commit messages or context).
+- For each entry include: **Date**, **Commit SHA (short)**, **Summary**, and **Key Files/Areas Changed**.
+- Avoid duplicating commit SHAs already present in `docs/CHANGE_HISTORY.md`.
