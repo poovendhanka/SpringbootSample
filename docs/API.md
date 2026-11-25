@@ -1,6 +1,8 @@
 # API Reference
 
-The API is served by the Spring Boot application under the `/orders` resource path. Responses are JSON objects represented internally as maps.
+The API is served by the Spring Boot application under `/orders`. Controllers return JSON-compatible `Map<String, Object>` values. The repository defines no authentication or authorization requirements.
+
+Base path: `/orders`
 
 ## Create an order
 
@@ -30,6 +32,8 @@ Successful response:
 
 Invalid input returns a response containing `status=FAILED` and a `message`. Unknown products return `status=FAILED` with `message=Unknown product`.
 
+Creation also rejects blank or missing customer/product values and quantities less than or equal to zero. The ID counter advances before unknown-product validation, so an unknown-product request does not leave an order but does consume the next ID.
+
 ## Get an order
 
 `GET /orders/{id}`
@@ -52,7 +56,7 @@ An eligible order is updated to `paymentStatus=PAID` and `orderStatus=CONFIRMED`
 
 `POST /orders/{id}/cancel`
 
-Cancels an order and returns the updated order. A paid order is marked `paymentStatus=REFUNDED` unless its amount exceeds 5,000; high-value paid orders instead receive `status=REFUND_PENDING` and remain in `orderStatus=REFUND_PENDING` pending refund approval. Missing or already-cancelled orders return an error response.
+Cancels an order and returns the updated order. A paid order is marked `paymentStatus=REFUNDED` unless its amount exceeds 5,000; high-value paid orders instead receive `status=REFUND_PENDING` and `orderStatus=REFUND_PENDING` pending refund approval. Missing or already-cancelled orders return an error response.
 
 ## Check cancelled state
 
