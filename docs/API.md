@@ -14,7 +14,7 @@ Query parameters:
 |---|---|---:|---|
 | `customer` | string | Yes | Customer name; must not be blank |
 | `product` | string | Yes | Product name: `laptop`, `phone`, `keyboard`, or `mouse` |
-| `quantity` | integer | Yes | Must be greater than zero |
+| `quantity` | integer | Yes | Must be greater than 1 under the current service validation |
 
 Successful response:
 
@@ -32,7 +32,7 @@ Successful response:
 
 Invalid input returns a response containing `status=FAILED` and a `message`. Unknown products return `status=FAILED` with `message=Unknown product`.
 
-Creation also rejects blank or missing customer/product values and quantities less than or equal to zero. The ID counter advances before unknown-product validation, so an unknown-product request does not leave an order but does consume the next ID.
+Creation also rejects blank or missing customer/product values and quantities less than or equal to 1. The returned failure message is currently `Quantity must be greater than zero`. The ID counter advances before unknown-product validation, so an unknown-product request does not leave an order but does consume the next ID.
 
 ## Get an order
 

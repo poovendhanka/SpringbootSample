@@ -18,7 +18,12 @@ This history summarizes the changes present on the `Stage` branch.
 | 2026-09-10 | `19c3d06` | Generated the initial API, architecture, and change-history documentation on `Stage`. | `docs/API.md`, `docs/ARCHITECTURE.md`, `docs/CHANGE_HISTORY.md` |
 | 2026-11-25 | `9a299ac` | Updated the code-documentation skill instructions and workflow. | `.github/skills/code-documentation/SKILL.md` |
 | 2026-11-25 | `22b9945` | Updated the documentation-generation GitHub Actions workflow. | `.github/workflows/update-documentation.yml` |
+| 2026-11-25 | `4cec289` | Generated an update to the repository documentation. | `docs/API.md`, `docs/ARCHITECTURE.md`, `docs/CHANGE_HISTORY.md` |
+| 2026-11-25 | `064ef55` | Merged the pull request that changed order quantity validation. | Pull request #9, `OrderService.java` |
+| 2026-09-11 | `97aa23b` | Changed order quantity validation to reject values less than or equal to 1. | `src/main/java/com/example/demo/service/OrderService.java` |
 
 ## Current state
 
-The latest `Stage` change updates the documentation workflow. The application remains an in-memory order service with the endpoints documented in [API.md](API.md). Documentation generation is automated by `.github/workflows/update-documentation.yml`, which runs on `Stage` pushes and manual dispatches while ignoring documentation-only paths to avoid recursive runs.
+The latest `Stage` merge incorporates quantity-validation changes in `OrderService.java`. The service currently rejects quantities less than or equal to 1, while retaining the existing failure message `Quantity must be greater than zero`.
+
+The application remains an in-memory order service with the endpoints documented in [API.md](API.md). Documentation generation is automated by `.github/workflows/update-documentation.yml`, which runs on `Stage` pushes and manual dispatches while ignoring documentation-only paths to avoid recursive runs.

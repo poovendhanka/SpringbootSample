@@ -51,6 +51,12 @@ flowchart LR
 - **OrderService** (`com.example.demo.service.OrderService`) owns a `HashMap<Integer, Map<String, Object>>`, assigns sequential IDs beginning at 1, and contains the order rules.
 - **Order representation** uses `LinkedHashMap` for newly created orders and status responses. Orders are keyed by integer ID.
 
+## Order Validation and Pricing
+
+Order creation validates the customer and product names before calculating an order. The service currently rejects a quantity when `quantity <= 1`; therefore quantities greater than 1 are accepted. Its validation response remains the message `Quantity must be greater than zero`.
+
+Product lookup is case-insensitive for `laptop`, `phone`, `keyboard`, and `mouse`. Unknown products are rejected, while ID allocation occurs before unknown-product validation. Quantities greater than or equal to five receive a 10% discount.
+
 ## Order Lifecycle
 
 New orders start with `paymentStatus=PENDING` and `orderStatus=CREATED`.
